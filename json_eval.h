@@ -32,27 +32,30 @@ public:
 
     std::map<std::string, std::pair<std::string, std::string>> getJsonMapping(std::string json_exp)
     {
+        mapping.clear();
         std::string expresion = json_exp;
-        int i = 0, found_class = 0, count_pr = 0;
+        int i = 0, found_obj = 0, count_pr = 0;
         std::string key;
-        // objects : {}
-        // arrays : []
-        // element : ""
+        // array : []
+        // object : {}
+        // string : ""
         while (i < expresion.size())
         {
-            if ((int)expresion[i] == 34 && !found_class)
+            if ((int)expresion[i] == 34 && !found_obj)
             {
                 i++;
                 key = "";
                 while (int(expresion[i]) != 34)
                     key.push_back(expresion[i]), i++;
-                found_class = 1;
+                found_obj = 1;
+                i++;
             }
-            if (found_class && expresion[i] == '{')
+            if (found_obj && expresion[i] == '{')
             {
                 i++;
                 count_pr++;
                 std::string value;
+                value.push_back('{');
                 while (count_pr)
                 {
                     if (expresion[i] == '{')
@@ -64,8 +67,39 @@ public:
                     value.push_back(expresion[i]);
                     i++;
                 }
-                mapping[key] = {value, "idkYet"};
-                found_class = 0;
+                value.push_back('}');
+                mapping[key] = {value, "object"};
+                found_obj = 0;
+            }
+            else if (found_obj && expresion[i] == '[')
+            {
+                i++;
+                count_pr++;
+                std::string value;
+                value.push_back('[');
+                while (count_pr)
+                {
+                    if (expresion[i] == '[')
+                        count_pr++;
+                    else if (expresion[i] == ']')
+                        count_pr--;
+                    if (!count_pr)
+                        break;
+                    value.push_back(expresion[i]);
+                    i++;
+                }
+                value.push_back(']');
+                mapping[key] = {value, "array"};
+                found_obj = 0;
+            }
+            else if (found_obj && int(expresion[i]) == 34)
+            {
+                i++;
+                std::string value;
+                while (int(expresion[i]) != 34)
+                    value.push_back(expresion[i]), i++;
+                mapping[key] = {value, "string"};
+                found_obj = 0;
             }
             i++;
         }
