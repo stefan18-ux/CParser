@@ -237,6 +237,9 @@ public:
                     value = map[key].first;
                     type = map[key].second;
 
+                    if (type == "string")
+                        break;
+
                     if (!value.size())
                         return "Error: There is no \"" + expresion + "\" field in this json!";
 
@@ -261,10 +264,12 @@ public:
                         return "Error: There is no \"" + expresion + "\" field in this json!";
 
                     if (type == "string")
-                        return value;
+                        break;
                 }
                 i++;
             }
+            if (expresion[i] == ']' && i == expresion.size() - 1)
+                return value;
             if (i < expresion.size())
                 value = "Error: There is no \"" + expresion + "\" field in this json!";
             return value;
@@ -302,5 +307,76 @@ public:
             key.push_back(next);
         }
         return expresion;
+    }
+
+    std::string solveBoth(std::string expresion, std::string json_exp)
+    {
+        int type = 0;
+        for (int i = 0; i < expresion.size(); i++)
+        {
+            if (expresion[i] == '[' && (expresion[i + 1] < '0' || expresion[i + 1] > '9'))
+            {
+                type = 1;
+                break;
+            }
+        }
+        if (!type)
+        {
+            return TrivialOP(expresion, json_exp);
+        }
+        else
+        {
+            std::map<std::string, std::string> key;
+            std::vector<std::string> tmp;
+            std::string str = SubscriptOP(expresion, json_exp, tmp);
+            tmp.push_back(expresion);
+            for (auto i : tmp)
+            {
+                std::string next = i;
+                std::string new_string;
+                int idx = -1, len = 0;
+                for (int i = 0; i < next.size() - 1; i++)
+                {
+                    if (next[i] == '[' && (next[i + 1] < '0' || next[i + 1] > '9'))
+                    {
+                        idx = i;
+                        len++;
+                        i++;
+                        int bracket = 1;
+                        while (bracket)
+                        {
+                            len++;
+                            new_string.push_back(next[i]);
+                            if (next[i] == '[')
+                                bracket++;
+                            else if (next[i] == ']')
+                                bracket--;
+                            i++;
+                        }
+                        new_string.pop_back();
+                        break;
+                    }
+                }
+                if (idx == -1)
+                {
+                    key[next] = TrivialOP(next, json_exp);
+                    std::string aux = key[next];
+                    if (aux.substr(0, 6) == "Error:")
+                        return "Error: There is no \"" + i + "\" field in this json!";
+                }
+                else
+                {
+                    std::string value = key[new_string];
+                    next.erase(idx, len);
+                    std::string ins = "[" + value + "]";
+                    next.insert(idx, ins);
+                    key[i] = TrivialOP(next, json_exp);
+                    std::string aux = key[i];
+                    if (aux.substr(0, 6) == "Error:")
+                        return "Error: There is no \"" + i + "\" field in this json!";
+                }
+            }
+            return key[expresion];
+        }
     }
 };
