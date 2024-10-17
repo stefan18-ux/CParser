@@ -3,6 +3,7 @@
 #include <fstream>
 #include <map>
 #include <vector>
+#include <sstream>
 #define FILE_IN "test.json"
 std::ifstream in(FILE_IN);
 class Parser
@@ -104,5 +105,163 @@ public:
             i++;
         }
         return mapping;
+    }
+
+    std::pair<std::string, std::string> ArrayProcessing(std::string expresion, int parameter)
+    {
+        std::string currentElement, type;
+        int bracketLevel = 0;
+        int braceLevel = 0;
+        parameter++;
+        int i = 1;
+        while (i < expresion.size() - 1)
+        {
+            currentElement = "", type = "";
+            if (expresion[i] == '{')
+            {
+                type = "object";
+                braceLevel = 1;
+                i++;
+                currentElement.push_back('{');
+                while (braceLevel)
+                {
+                    currentElement.push_back(expresion[i]);
+                    if (expresion[i] == '{')
+                        braceLevel++;
+                    else if (expresion[i] == '}')
+                        braceLevel--;
+                    i++;
+                }
+                i++;
+                parameter--;
+                if (!parameter)
+                    return {currentElement, type};
+            }
+            currentElement = "", type = "";
+            if (expresion[i] == '[')
+            {
+                type = "array";
+                bracketLevel = 1;
+                i++;
+                currentElement.push_back('[');
+                while (bracketLevel)
+                {
+                    currentElement.push_back(expresion[i]);
+                    if (expresion[i] == '[')
+                        bracketLevel++;
+                    else if (expresion[i] == ']')
+                        bracketLevel--;
+                    i++;
+                }
+                i++;
+                parameter--;
+                if (!parameter)
+                    return {currentElement, type};
+            }
+            if (!type.size())
+            {
+                type = "string";
+                while (expresion[i] != ',' && i < expresion.size() - 1)
+                    currentElement.push_back(expresion[i]), i++;
+                i++;
+                parameter--;
+                if (!parameter)
+                    return {currentElement, type};
+            }
+        }
+        if (parameter)
+            currentElement = "", type = "";
+        return {currentElement, type};
+    }
+
+    std::string TrivialOP(std::string expresion, std::string json_exp)
+    {
+        size_t pos_dot = expresion.find('.');
+        size_t pos_bracket = expresion.find('[');
+
+        std::map<std::string, std::pair<std::string, std::string>> map = getJsonMapping(json_exp);
+
+        // Answering simple queries : <name>
+        if (pos_dot == std::string::npos && pos_bracket == std::string::npos)
+        {
+            if (map[expresion].first.size())
+                return map[expresion].first;
+            else if (map[expresion].first.size() == 0)
+                return "Error: There is no \"" + expresion + "\" field in this json!";
+        }
+
+        // Answering queries containing only "." and no "[]"
+        if (pos_dot != std::string::npos && pos_bracket == std::string::npos)
+        {
+            int i = 0;
+            std::string value;
+            while (i < expresion.size())
+            {
+                std::string key;
+                while (expresion[i] != '.' && i < expresion.size())
+                    key.push_back(expresion[i]), i++;
+                i++;
+
+                value = map[key].first;
+                if (map[key].second == "string")
+                    break;
+                map = getJsonMapping(value);
+            }
+            if (i < expresion.size())
+                value = "Error: There is no \"" + expresion + "\" field in this json!";
+            return value;
+        }
+
+        // Answering queries containing both "." and "[]"
+        if (pos_dot && pos_bracket)
+        {
+            int i = 0, parameter = 0;
+            std::string value, type = "object", key;
+            while (i < expresion.size())
+            {
+                if ((expresion[i] == '.' && type == "array") || (expresion[i] == '[' && type == "object"))
+                    break;
+                if (type == "object")
+                {
+                    key = "";
+                    if (expresion[i] == '.')
+                        i++;
+                    while (expresion[i] != '.' && expresion[i] != '[' && i < expresion.size())
+                        key.push_back(expresion[i]),
+                            i++;
+
+                    value = map[key].first;
+                    type = map[key].second;
+
+                    map = getJsonMapping(value);
+                }
+                if (key.size() && expresion[i] == '[' && i < expresion.size())
+                {
+                    // processing string, object - kinda easy
+                    // processing array - hard
+                    if (type == "string" || type == "object")
+                        break;
+
+                    i++;
+                    parameter = 0;
+                    while (expresion[i] != ']')
+                        parameter = parameter * 10 + expresion[i] - '0', i++;
+                    // it's an array;
+                    std::pair<std::string, std::string> ans = ArrayProcessing(value, parameter);
+                    value = ans.first;
+                    type = ans.second;
+                    if (value == "" && type == "")
+                        return "Error: There is no \"" + expresion + "\" field in this json!";
+
+                    if (type == "string")
+                        return value;
+                }
+                i++;
+            }
+            if (i < expresion.size())
+                value = "Error: There is no \"" + expresion + "\" field in this json!";
+            return value;
+        }
+        return "";
     }
 };
