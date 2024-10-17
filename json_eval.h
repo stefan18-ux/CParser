@@ -203,6 +203,10 @@ public:
                 i++;
 
                 value = map[key].first;
+
+                if (!value.size())
+                    return "Error: There is no \"" + expresion + "\" field in this json!";
+
                 if (map[key].second == "string")
                     break;
                 map = getJsonMapping(value);
@@ -232,6 +236,9 @@ public:
 
                     value = map[key].first;
                     type = map[key].second;
+
+                    if (!value.size())
+                        return "Error: There is no \"" + expresion + "\" field in this json!";
 
                     map = getJsonMapping(value);
                 }
@@ -263,5 +270,37 @@ public:
             return value;
         }
         return "";
+    }
+
+    std::string SubscriptOP(std::string expresion, std::string json_exp, std::vector<std::string> &key)
+    {
+        std::string new_exp;
+        bool type = false;
+        for (int i = 0; i < expresion.size() - 1; i++)
+        {
+            if (expresion[i] == '[' && (expresion[i + 1] < '0' || expresion[i + 1] > '9'))
+            {
+                type = true;
+                i++;
+                int bracket = 1;
+                while (bracket)
+                {
+                    new_exp.push_back(expresion[i]);
+                    if (expresion[i] == '[')
+                        bracket++;
+                    else if (expresion[i] == ']')
+                        bracket--;
+                    i++;
+                }
+                new_exp.pop_back();
+                break;
+            }
+        }
+        if (type)
+        {
+            std::string next = SubscriptOP(new_exp, json_exp, key);
+            key.push_back(next);
+        }
+        return expresion;
     }
 };
