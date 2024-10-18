@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     std::string json_exp = parser.getJsonExp();
     std::cout << json_exp << "\n";
     // std::string expresion = argv[1];
-    std::string expresion = "size(a.b[a.b[1]].c)";
+    std::string expresion = "max(a.b[0],a.b[1],a.b[3],11)";
     if (!parser.checkParantheses(expresion))
     {
         return 0;
@@ -30,7 +30,6 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    std::cout
-        << parser.solveBoth(expresion, json_exp) << '\n';
+    std::cout << parser.solveBoth(expresion, json_exp) << '\n';
     return 0;
 }

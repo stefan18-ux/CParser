@@ -494,13 +494,146 @@ public:
             return ans.size();
     }
 
+    std::vector<std::string> getArrayElements(std::string expresion)
+    {
+        std::vector<std::string> ans;
+        std::string currentElement;
+        int i = 1;
+        while (i < expresion.size() - 1)
+        {
+            currentElement = "";
+            while (expresion[i] != ',' && i < expresion.size() - 1)
+                currentElement.push_back(expresion[i]), i++;
+            i++;
+            ans.push_back(currentElement);
+        }
+
+        return ans;
+    }
+
     int ImplementMin(std::string expresion, std::string json_exp)
     {
-        return 0;
+        std::string aux;
+        for (int i = 4; i < expresion.size() - 1; i++)
+            aux.push_back(expresion[i]);
+        expresion = aux;
+
+        std::stringstream ss(expresion);
+        std::string item;
+        std::vector<std::string> elements;
+
+        while (std::getline(ss, item, ','))
+        {
+            item.erase(0, item.find_first_not_of(" "));
+            item.erase(item.find_last_not_of(" ") + 1);
+            elements.push_back(item);
+        }
+        long long minimum = 0;
+        bool first = false;
+        for (const auto &elem : elements)
+        {
+            if (elem[0] >= '0' && elem[0] <= '9')
+            {
+                long long number = 0;
+                for (auto i : elem)
+                    number = number * 10 + i - '0';
+                if (!first)
+                    minimum = number, first = true;
+                else
+                    minimum = std::min(minimum, number);
+            }
+            else
+            {
+                std::string ans = solveBoth(elem, json_exp);
+                if (ans[0] == '[')
+                {
+                    std::vector<std::string> array = getArrayElements(ans);
+                    for (auto i : array)
+                    {
+                        long long number = 0;
+                        for (auto j : i)
+                            number = number * 10 + j - '0';
+                        if (!first)
+                            minimum = number, first = true;
+                        else
+                            minimum = std::min(minimum, number);
+                    }
+                }
+                else
+                {
+                    long long number = 0;
+                    for (auto i : ans)
+                        number = number * 10 + i - '0';
+                    if (!first)
+                        minimum = number, first = true;
+                    else
+                        minimum = std::min(minimum, number);
+                }
+            }
+        }
+        return minimum;
     }
 
     int ImplementMax(std::string expresion, std::string json_exp)
     {
-        return 0;
+        std::string aux;
+        for (int i = 4; i < expresion.size() - 1; i++)
+            aux.push_back(expresion[i]);
+        expresion = aux;
+
+        std::stringstream ss(expresion);
+        std::string item;
+        std::vector<std::string> elements;
+
+        while (std::getline(ss, item, ','))
+        {
+            item.erase(0, item.find_first_not_of(" "));
+            item.erase(item.find_last_not_of(" ") + 1);
+            elements.push_back(item);
+        }
+        long long maximum = 0;
+        bool first = false;
+        for (const auto &elem : elements)
+        {
+            if (elem[0] >= '0' && elem[0] <= '9')
+            {
+                long long number = 0;
+                for (auto i : elem)
+                    number = number * 10 + i - '0';
+                if (!first)
+                    maximum = number, first = true;
+                else
+                    maximum = std::max(maximum, number);
+            }
+            else
+            {
+                std::string ans = solveBoth(elem, json_exp);
+                if (ans[0] == '[')
+                {
+                    std::vector<std::string> array = getArrayElements(ans);
+                    for (auto i : array)
+                    {
+                        long long number = 0;
+                        for (auto j : i)
+                            number = number * 10 + j - '0';
+                        if (!first)
+                            maximum = number, first = true;
+                        else
+                            maximum = std::max(maximum, number);
+                    }
+                }
+                else
+                {
+                    long long number = 0;
+                    for (auto i : ans)
+                        number = number * 10 + i - '0';
+                    if (!first)
+                        maximum = number, first = true;
+                    else
+                        maximum = std::max(maximum, number);
+                }
+            }
+        }
+        return maximum;
     }
 };
