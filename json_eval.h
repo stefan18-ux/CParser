@@ -3,6 +3,7 @@
 #include <fstream>
 #include <map>
 #include <vector>
+#include <stack>
 #include <sstream>
 #define FILE_IN "test.json"
 std::ifstream in(FILE_IN);
@@ -23,7 +24,19 @@ public:
 
     std::string getJsonExp() const
     {
-        return json_exp;
+        std::string aux = json_exp;
+        for (int i = 1; i < aux.size(); i++)
+        {
+            if (aux[i - 1] == ':' && aux[i] >= '0' && aux[i] <= '9')
+            {
+                aux.insert(i, "\"");
+                i++;
+                while (aux[i] >= '0' && aux[i] <= '9')
+                    i++;
+                aux.insert(i, "\"");
+            }
+        }
+        return aux;
     }
 
     std::string evalMapping(std::string expresion)
@@ -106,7 +119,60 @@ public:
         }
         return mapping;
     }
-
+    int CountArrayElements(std::string expresion)
+    {
+        std::string type;
+        int bracketLevel = 0;
+        int braceLevel = 0;
+        int parameter = 0;
+        int i = 1;
+        while (i < expresion.size() - 1)
+        {
+            type = "";
+            if (expresion[i] == '{')
+            {
+                type = "object";
+                braceLevel = 1;
+                i++;
+                while (braceLevel)
+                {
+                    if (expresion[i] == '{')
+                        braceLevel++;
+                    else if (expresion[i] == '}')
+                        braceLevel--;
+                    i++;
+                }
+                i++;
+                parameter++;
+            }
+            type = "";
+            if (expresion[i] == '[')
+            {
+                type = "array";
+                bracketLevel = 1;
+                i++;
+                while (bracketLevel)
+                {
+                    if (expresion[i] == '[')
+                        bracketLevel++;
+                    else if (expresion[i] == ']')
+                        bracketLevel--;
+                    i++;
+                }
+                i++;
+                parameter++;
+            }
+            if (!type.size())
+            {
+                type = "string";
+                while (expresion[i] != ',' && i < expresion.size() - 1)
+                    i++;
+                i++;
+                parameter++;
+            }
+        }
+        return parameter;
+    }
     std::pair<std::string, std::string> ArrayProcessing(std::string expresion, int parameter)
     {
         std::string currentElement, type;
@@ -378,5 +444,63 @@ public:
             }
             return key[expresion];
         }
+    }
+
+    bool checkParantheses(std::string expresion)
+    {
+        int bracket = 0;
+        for (int j = 0; j < expresion.size(); j++)
+        {
+            char i = expresion[j];
+            if (i == '[')
+            {
+                bracket++;
+                if (j < expresion.size() - 1)
+                    if (expresion[j + 1] == ']' || expresion[j + 1] == '[')
+                    {
+                        std::cout << "There's an error in your query." << '\n';
+                        return false;
+                    }
+            }
+            else if (i == ']')
+                bracket--;
+        }
+        if (bracket)
+        {
+            std::cout << "Unmatched parantheses." << '\n';
+            return false;
+        }
+        return true;
+    }
+
+    int ImplementSize(std::string expresion, std::string json_exp)
+    {
+        std::string aux;
+        for (int i = 5; i < expresion.size() - 1; i++)
+            aux.push_back(expresion[i]);
+        expresion = aux;
+        std::string ans = solveBoth(expresion, json_exp);
+        if (ans[0] == '[')
+        {
+            return CountArrayElements(ans);
+        }
+        else if (ans[0] == '{')
+        {
+            std::string value = ans;
+            std::map<std::string, std::pair<std::string, std::string>> map = getJsonMapping(value);
+            return map.size();
+        }
+        else
+            return ans.size();
+    }
+
+    int ImplementMin(std::string expresion, std::string json_exp)
+    {
+        return 0;
+    }
+
+    int ImplementMax(std::string expresion, std::string json_exp)
+    {
+        return 0;
     }
 };
