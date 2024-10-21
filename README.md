@@ -13,7 +13,7 @@ This is the main entry point of the program. It reads a JSON file and evaluates 
   - `std::string expresion. Defines the expression to evaluate.`
   - Based on the expression (`size`, `min`, `max`, `size`), it evaluates the corresponding operation using the functions implemented in the `Parser` class.
 
-### 2. `json_eval.h` (Parser Class)
+### 2. `json_eval.cpp` (Parser Class)
 This file contains the definition of the `Parser` class, which performs the main JSON parsing and evaluation logic.
 
 - **Key Methods:**
@@ -106,8 +106,16 @@ So in the end we are left with a simple query that can be anwered pretty quicly
 For the other queries that require min, max, size, etc, the expresion is just simply parsed and then all of the json expresions are transformed into numbers.
 
 
+## How to run the Parser, using only the c++ executable:
 
+You have to store your json expresion in the `test.json` file, and the `query` has to be passed in the command line.
+It's gonna look something like this:
 
+```bash
+make clean
+make
+./json_eval "a.b[4]"
+```
 
-
+## You can also use the automated tests
 

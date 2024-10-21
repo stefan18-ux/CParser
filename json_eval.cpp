@@ -1,4 +1,6 @@
 #include "json_eval.h"
+#define FILE_IN "test.json"
+std::ifstream in(FILE_IN);
 
 int main(int argc, char *argv[])
 {
@@ -7,9 +9,12 @@ int main(int argc, char *argv[])
     while (in >> c)
         parser.setJsonExp(c);
     std::string json_exp = parser.getJsonExp();
-    std::cout << json_exp << "\n";
-    // std::string expresion = argv[1];
-    std::string expresion = "max(a.b[0],a.b[1],a.b[3],11)";
+    if (argc < 2)
+    {
+        std::cout << "You must introduce a query!\n";
+        return 0;
+    }
+    std::string expresion = argv[1];
     if (!parser.checkParantheses(expresion))
     {
         return 0;

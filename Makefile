@@ -4,7 +4,7 @@ CXX = g++
 
 CXXFLAGS = -Wall -g -std=c++11
 
-SRCS = json_eval.cpp
+SRCS = json_eval.cpp helper.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 
