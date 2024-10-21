@@ -50,7 +50,7 @@ The program reads the JSON file `test.json` and evaluates expressions such as:
 
 Let's take this json example: {"a": { "b": [1, 2, { "c": "test" }, [11, 12] ],"d": { "e": [ 1 , 2 ] }}, "d": { "e": [ 1 , 2 ] }}
 
-Firstly i start by putting in a map the main fields of the json, so it's gonna look something like this:
+Firstly it starts by putting in a map the main fields of the json, so it's gonna look something like this:
 ``` c
 map[a] =  { "b": [1, 2, { "c": "test" }, [11, 12] ],"d": { "e": [ 1 , 2 ] }}
 map[d] = { "e": [ 1 , 2 ] }
@@ -67,9 +67,45 @@ map[a] = value;
 get_most_outer_layer(value);
 ```
 
-And for implementing the most difficult queries that consist in expresionsn like "a.b[<number>]", i just repeated the last 2 steps and made a method that processes arrays and returns the element on position <number>.
+And for implementing the most difficult queries that consist in expresionsn like "a.b[<number>]", it just repeated the last 2 steps and made a method that processes arrays and returns the element on position <number>.
 
-Also a very important thing that i did, i categorized the elements in objects, arrays and strings, in order to easily work with all the structures.
+Also a very important thing is categorizing the elements in objects, arrays and strings, in order to easily work with all the structures.
+
+### My approach on the imbricated queries:
+
+Started by appending to the vector the inner layers of my query.
+
+Let's take this query as example:
+```json
+a.b[a.b[a.c[5]]].c
+```
+
+Appending to my expresion vector the strings like this:
+
+```json
+a.c[5]
+```
+
+```json
+a.b[a.c[5]]
+```
+
+```json
+a.b[a.b[a.c[5]]].c
+```
+
+So by calculating this simple queries in this order, the previous string it's replced by the answer, so the query is processed something like that:
+
+```c
+value = query(a.c[5])
+value = query(a.b[value])
+value = query(a.b[value].c)
+```
+
+So in the end we are left with a simple query that can be anwered pretty quicly
+For the other queries that require min, max, size, etc, the expresion is just simply parsed and then all of the json expresions are transformed into numbers.
+
+
 
 
 
