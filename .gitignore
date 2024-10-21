@@ -2,3 +2,4 @@
 json_eval
 json_eval.o
 output
+helper.o
