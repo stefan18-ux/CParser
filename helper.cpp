@@ -459,6 +459,8 @@ int Parser::ImplementSize(std::string expresion, std::string json_exp)
         aux.push_back(expresion[i]);
     expresion = aux;
     std::string ans = solveBoth(expresion, json_exp);
+    if (ans.substr(0, 5) == "Error")
+        return -1;
     if (ans[0] == '[')
     {
         return CountArrayElements(ans);
@@ -524,6 +526,8 @@ int Parser::ImplementMin(std::string expresion, std::string json_exp)
         else
         {
             std::string ans = solveBoth(elem, json_exp);
+            if (ans.substr(0, 5) == "Error")
+                return -1;
             if (ans[0] == '[')
             {
                 std::vector<std::string> array = getArrayElements(ans);
@@ -587,6 +591,8 @@ int Parser::ImplementMax(std::string expresion, std::string json_exp)
         else
         {
             std::string ans = solveBoth(elem, json_exp);
+            if (ans.substr(0, 5) == "Error")
+                return -1;
             if (ans[0] == '[')
             {
                 std::vector<std::string> array = getArrayElements(ans);

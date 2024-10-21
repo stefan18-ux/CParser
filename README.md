@@ -108,14 +108,30 @@ For the other queries that require min, max, size, etc, the expresion is just si
 
 ## How to run the Parser, using only the c++ executable:
 
-You have to store your json expresion in the `test.json` file, and the `query` has to be passed in the command line.
+You have to store your json expresion in a file, and the `query` has to be passed in the command line.
 It's gonna look something like this:
 
 ```bash
 make clean
+```
+``` bash
 make
-./json_eval "a.b[4]"
+```
+``` bash
+./json_eval <file_name> <query>
 ```
 
-## You can also use the automated tests
+Where <file_name> should be the name of the file that contains the json expresion and the query should look like this:
+`"a.b[0]", "a.b.c[a[0].b]", etc...`
 
+For e.g. `./json_eval test.json "size(a.b.[0])"`
+The result is gonna be printed in the command line.
+
+## You can also use the automated tests in order to check the parser.
+In order to run the automated tests, you can just run the command:
+
+```python
+python3 checker.py
+```
+
+It automatically runs the make commands and checks the parser on a lot of different and complex queries that really test the greatness of the parser.
