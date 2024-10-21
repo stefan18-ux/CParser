@@ -76,21 +76,21 @@ Also a very important thing is categorizing the elements in objects, arrays and 
 Started by appending to the vector the inner layers of my query.
 
 Let's take this query as example:
-```json
+```c
 a.b[a.b[a.c[5]]].c
 ```
 
 Appending to my expresion vector the strings like this:
 
-```json
+```c
 a.c[5]
 ```
 
-```json
+```c
 a.b[a.c[5]]
 ```
 
-```json
+```c
 a.b[a.b[a.c[5]]].c
 ```
 
