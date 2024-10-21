@@ -124,7 +124,13 @@ make
 Where <file_name> should be the name of the file that contains the json expresion and the query should look like this:
 `"a.b[0]", "a.b.c[a[0].b]", etc...`
 
-For e.g. `./json_eval test.json "size(a.b.[0])"`
+This is a correct way of running the executable:
+
+E.g:
+```c
+./json_eval test.json "size(a.b.[0])"
+```
+
 The result is gonna be printed in the command line.
 
 ## You can also use the automated tests in order to check the parser.
