@@ -48,26 +48,28 @@ The program reads the JSON file `test.json` and evaluates expressions such as:
 
 ## Let me walk you through the creation process.
 
-`Let's take this json example: {"a": { "b": [1, 2, { "c": "test" }, [11, 12] ],"d": { "e": [ 1 , 2 ] }}, "d": { "e": [ 1 , 2 ] }}`
+Let's take this json example: {"a": { "b": [1, 2, { "c": "test" }, [11, 12] ],"d": { "e": [ 1 , 2 ] }}, "d": { "e": [ 1 , 2 ] }}
 
-`Firstly i start by putting in a map the main fields of the json, so it's gonna look something like this:`
+Firstly i start by putting in a map the main fields of the json, so it's gonna look something like this:
 ``` c
 map[a] =  { "b": [1, 2, { "c": "test" }, [11, 12] ],"d": { "e": [ 1 , 2 ] }}
 map[d] = { "e": [ 1 , 2 ] }
 ```
 ### Because they are the the most outer layer of our json expresion.`
 
-`For implementing the queries that are consisting in a single letter query are done pretty easily, just by printing map[<that letter>];`
-`For implementing the queries that are consisting just in letters and '.', we are just gonna have to use the same method that gets the most outer layers for the values of our current outer layers, It's gonna look something like that:`
+For implementing the queries that are consisting in a single letter query are done pretty easily, just by printing map[<that letter>];
+
+
+For implementing the queries that are consisting just in letters and '.', we are just gonna have to use the same method that gets the most outer layers for the values of our current outer layers, It's gonna look something like that:
 
 ```c
 map[a] = value;
 get_most_outer_layer(value);
 ```
 
-`And for implementing the most difficult queries that consist in expresionsn like "a.b[<number>]", i just repeated the last 2 steps and made a method that processes arrays and returns the element on position <number>.`
+And for implementing the most difficult queries that consist in expresionsn like "a.b[<number>]", i just repeated the last 2 steps and made a method that processes arrays and returns the element on position <number>.
 
-`Also a very important thing that i did, i categorized the elements in objects, arrays and strings, in order to easily work with all the structures.`
+Also a very important thing that i did, i categorized the elements in objects, arrays and strings, in order to easily work with all the structures.
 
 
 
