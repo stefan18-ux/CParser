@@ -1,6 +1,6 @@
 # JSON Expression Evaluator
 
-This project implements a JSON parser and evaluator that can process JSON data and execute mathematical functions (`max`, `min`, `size`) on it. The main goal of this program is to extract values from a JSON structure and compute results based on specific expressions.
+This project implements a JSON parser and evaluator that can process JSON data and also execute mathematical functions (`max`, `min`, `size`) on it. The main goal of this program is to extract values from a JSON structure and compute results based on specific expressions.
 
 ## Files Overview
 
@@ -33,6 +33,14 @@ This file contains the definition of the `Parser` class, which performs the main
 
 The program reads the JSON file `test.json` and evaluates expressions such as:
 
+From trivial queries like:
+- `a`, `a.b`, `a.b.c`, `a.b[0]`, `a.b[2].c`, `a.b[3][0]`
+
+To more complex queries containing expressions in the subscript operator []:
+- `a.b[a.b[1]].c`
+
+And also intrinsic functions: `min`, `max`, `size`:
+
 - `max(a.b[0],a.b[1],a.b[3],11)`
 - `min(a.b[0],a.b[1],5)`
 - `size(a.b)`
@@ -48,7 +56,37 @@ The program reads the JSON file `test.json` and evaluates expressions such as:
 
 ## Let me walk you through the creation process.
 
-Let's take this json example: {"a": { "b": [1, 2, { "c": "test" }, [11, 12] ],"d": { "e": [ 1 , 2 ] }}, "d": { "e": [ 1 , 2 ] }}
+Let's take this json example:
+```json
+
+ {
+  "a": {
+    "b": [
+      1,
+      2,
+      {
+        "c": "test"
+      },
+      [
+        11,
+        12
+      ]
+    ],
+    "d": {
+      "e": [
+        1,
+        2
+      ]
+    }
+  },
+  "d": {
+    "e": [
+      1,
+      2
+    ]
+  }
+}
+```
 
 Firstly it starts by putting in a map the main fields of the json, so it's gonna look something like this:
 ``` c
