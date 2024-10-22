@@ -93,7 +93,7 @@ Firstly it starts by putting in a map the main fields of the json, so it's gonna
 map[a] =  { "b": [1, 2, { "c": "test" }, [11, 12] ],"d": { "e": [ 1 , 2 ] }}
 map[d] = { "e": [ 1 , 2 ] }
 ```
-### Because they are the the most outer layer of our json expresion.`
+### Because they are the the most outer layers of our json expresion.
 
 For implementing the queries that are consisting in a single letter query are done pretty easily, just by printing map[<that letter>];
 
